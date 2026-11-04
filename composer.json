@@ -1,0 +1,53 @@
+{
+	"name": "drago-ex/project-front-ui",
+	"description": "Integration of a basic template for the website: the layout, the home page with the blog and the static pages in the menu.",
+	"type": "drago-tools-resource",
+	"license": "MIT",
+	"require": {
+		"php": ">=8.3 <9",
+		"drago-ex/translator": "^4.0.1",
+		"drago-ex/application": "^4.0",
+		"drago-ex/component": "^3.0",
+		"drago-ex/form": "^3.0",
+		"drago-ex/texy-toolbar": "^1.1",
+		"drago-ex/permission": "^2.0",
+		"drago-ex/project-front": "^3.0",
+		"drago-ex/project-user": "^1.0",
+		"drago-ex/project-auth": "^2.0",
+		"drago-ex/project-account": "^2.0",
+		"drago-ex/project-settings": "^2.0",
+		"drago-ex/project-blog": "^2.0",
+		"drago-ex/project-static-page": "^2.0"
+	},
+	"require-dev": {
+		"phpstan/phpstan": "^2.0",
+		"phpstan/phpstan-nette": "^2.0",
+		"drago-ex/project-tools": "^1.0"
+	},
+	"extra": {
+		"drago-tools": {
+			"install": {
+				"replace-once": true,
+				"replace-priority": 200,
+				"replace": {
+					"resources/app": "app",
+					"resources/assets": "assets"
+				}
+			}
+		},
+		"drago-translator": {
+			"translation": "app/Presentation/Front/Translate"
+		}
+	},
+	"scripts": {
+		"phpstan": "phpstan analyse",
+		"post-install-cmd": [
+			"drago-install --dev",
+			"drago-clean"
+		],
+		"post-update-cmd": [
+			"drago-install --dev",
+			"drago-clean"
+		]
+	}
+}

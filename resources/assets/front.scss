@@ -1,0 +1,134 @@
+@import 'core/base';
+@import 'naja/spinner';
+@import 'theme-switcher-compostrap/src/scss/theme-switcher';
+@import '@fortawesome/fontawesome-free/css/all.css';
+
+//
+// front style
+//
+
+html,
+body {
+	min-height: 100%;
+}
+
+.front-page {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--bs-body-bg);
+}
+
+.front-navbar {
+	.nav-link.active {
+		font-weight: 600;
+	}
+
+	.dropdown-toggle,
+	[data-theme-switcher] {
+		color: var(--bs-navbar-color);
+
+		&:hover {
+			color: var(--bs-navbar-hover-color);
+		}
+	}
+}
+
+.front-main {
+	width: 100%;
+	padding-block: 2rem 3rem;
+}
+
+// an article of the blog list: a soft background instead of a border, the whole card is a link
+.blog-card {
+	background-color: var(--bs-tertiary-bg);
+	transition: background-color 0.15s ease-in-out;
+
+	&:hover {
+		background-color: var(--bs-secondary-bg);
+
+		.blog-card-title {
+			text-decoration: underline !important;
+			text-underline-offset: 0.15em;
+		}
+	}
+}
+
+// a category pill of the blog list that is not selected (the selected one is .active of .nav-pills)
+.blog-pill {
+	color: var(--bs-body-color);
+	background-color: var(--bs-tertiary-bg);
+
+	&:hover,
+	&:focus {
+		color: var(--bs-body-color);
+		background-color: var(--bs-secondary-bg);
+	}
+}
+
+// the newest article over the whole row: no background, the title is underlined on hover like in the cards
+.blog-featured:hover .blog-card-title {
+	text-decoration: underline !important;
+	text-underline-offset: 0.15em;
+}
+
+// links inside the card stay clickable above the stretched title link
+.blog-card-over {
+	position: relative;
+	z-index: 2;
+}
+
+.blog-card-lede {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	overflow: hidden;
+}
+
+// Texy text of articles and pages: larger, with more space between lines; images as the cover of an article,
+// a 21:9 cut over the whole column
+.content {
+	font-size: 1.125rem;
+	line-height: 1.7;
+
+	h2,
+	h3 {
+		margin-top: 2.5rem;
+		margin-bottom: 1rem;
+	}
+
+	img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 21 / 9;
+		object-fit: cover;
+		object-position: top;
+		border-radius: var(--bs-border-radius-lg);
+	}
+}
+
+.front-footer-link {
+	color: var(--bs-body-color);
+	text-decoration: none;
+
+	&:hover {
+		color: var(--bs-emphasis-color);
+		text-decoration: underline;
+	}
+}
+
+// Texy paragraphs and lists of a comment without the bottom margin of the last one, so the box stays even
+.comment-content > :last-child {
+	margin-bottom: 0;
+}
+
+// a comment opened by its link (#comment-2) is highlighted and not hidden under the sticky header
+.comment,
+#comment-form {
+	scroll-margin-top: 6rem;
+}
+
+.comment:target {
+	background-color: var(--bs-secondary-bg) !important;
+}

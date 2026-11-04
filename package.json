@@ -1,0 +1,8 @@
+{
+	"name": "drago-project-front-ui",
+	"private": true,
+	"dependencies": {
+		"@fortawesome/fontawesome-free": "^7.1.0",
+		"theme-switcher-compostrap": "^2.0.1"
+	}
+}
