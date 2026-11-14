@@ -14,8 +14,10 @@
 	   page does not flash light until the ThemeSwitcher script runs *}
 	<script>try { let theme = localStorage.getItem('bootstrap-theme') || 'auto'; if (theme === 'auto') { theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } if (theme === 'light' || theme === 'dark') { document.documentElement.setAttribute('data-bs-theme', theme); } } catch (e) { }</script>
 	<title>{ifset title}{include title|stripHtml|trim|firstUpper} &bull; {/ifset}{include brand|stripHtml|trim}</title>
-	{* a page sets $description (e.g. a static page) to get a meta description for search engines *}
-	<meta n:ifset="$description" name="description" content={$description}>
+	{* the meta description for search engines: the one of the page (a static page, the perex of an article), else the
+	   description of the website from the settings *}
+	{var $metaDescription = ($description ?? null) ?: (isset($settings) && $settings->has('description') ? $settings->get('description') : null)}
+	<meta n:if="$metaDescription" name="description" content={$metaDescription}>
 
 	{asset 'front.js'}
 </head>
