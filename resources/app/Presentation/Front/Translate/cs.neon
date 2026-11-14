@@ -11,5 +11,7 @@
 "Dark": "Tmavý"
 "Auto": "Automaticky"
 
+"Menu": "Menu"
+
 # descriptions of the privileges (permissionLabels in acl.neon)
 "Home page": "Úvodní stránka"
