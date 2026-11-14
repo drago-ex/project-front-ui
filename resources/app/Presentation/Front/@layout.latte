@@ -10,8 +10,9 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	{* the remembered theme before the page is drawn, so a dark page does not flash light until the ThemeSwitcher script runs *}
-	<script>try { const theme = localStorage.getItem('bootstrap-theme'); if (theme === 'light' || theme === 'dark') { document.documentElement.setAttribute('data-bs-theme', theme); } } catch (e) { }</script>
+	{* the remembered theme (without one, or with auto, the theme of the system) before the page is drawn, so a dark
+	   page does not flash light until the ThemeSwitcher script runs *}
+	<script>try { let theme = localStorage.getItem('bootstrap-theme') || 'auto'; if (theme === 'auto') { theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; } if (theme === 'light' || theme === 'dark') { document.documentElement.setAttribute('data-bs-theme', theme); } } catch (e) { }</script>
 	<title>{ifset title}{include title|stripHtml|trim|firstUpper} &bull; {/ifset}{include brand|stripHtml|trim}</title>
 	{* a page sets $description (e.g. a static page) to get a meta description for search engines *}
 	<meta n:ifset="$description" name="description" content={$description}>
@@ -19,54 +20,70 @@
 	{asset 'front.js'}
 </head>
 
-<body class="front-page">
+{* the website of the compostrap module blog: a tinted header with the brand, the links (a folded menu on a phone)
+   and the user, the content on a white page, a tinted footer *}
+<body class="blog-page">
 
-<header class="sticky-top">
-	<nav class="navbar navbar-expand-lg py-3 bg-body-tertiary front-navbar">
+<header class="blog-header">
+	<nav class="navbar navbar-expand-lg">
 		<div class="container">
-			<a class="navbar-brand d-flex align-items-center gap-2" n:href=":Front:Home:">
+			<a class="blog-brand" n:href=":Front:Home:">
 				{include brand-logo}
-				<span class="fw-semibold text-body-emphasis">{include brand}</span>
+				<span>{include brand}</span>
 			</a>
 
-			<button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#front-menu"
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#front-menu"
 					aria-controls="front-menu" aria-expanded="false" aria-label="{_'Menu'}">
 				<span class="navbar-toggler-icon"></span>
 			</button>
 
 			<div class="collapse navbar-collapse" id="front-menu">
 				{* the brand links the home page; the blog and the static pages marked "Show in the menu" in the administration *}
-				<ul class="navbar-nav ms-auto me-lg-2">
+				<ul class="navbar-nav ms-auto">
 					<li class="nav-item">
-						<a n:href=":Front:Blog:" n:class="nav-link, $presenter->isLinkCurrent(':Front:Blog:*') ? active">{_'Blog'}</a>
+						{var bool $current = $presenter->isLinkCurrent(':Front:Blog:*')}
+						<a n:href=":Front:Blog:" n:class="nav-link, $current ? active" n:attr="aria-current: $current ? page : null">{_'Blog'}</a>
 					</li>
 					<li n:foreach="$menuPages as $slug => $title" class="nav-item">
-						<a n:href=":Front:Page:default, slug: $slug" n:class="nav-link, $presenter->isLinkCurrent(':Front:Page:default', [slug: $slug]) ? active">{$title}</a>
+						{var bool $current = $presenter->isLinkCurrent(':Front:Page:default', [slug: $slug])}
+						<a n:href=":Front:Page:default, slug: $slug" n:class="nav-link, $current ? active" n:attr="aria-current: $current ? page : null">{$title}</a>
 					</li>
 				</ul>
 
-				<div class="d-flex flex-wrap align-items-center gap-1">
+				<div class="blog-header-actions">
 					{if $user->isLoggedIn()}
-						{* like @dropdown.latte, but the user name is data and is not translated *}
-						<div class="dropdown custom-dropdown">
-							<button class="btn btn-link dropdown-toggle text-decoration-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="fa-regular fa-user"></i>
-								<span>{$user->getUserIdentity()->username}</span>
+						{* the signed-in user: avatar and name; the account, the administration, the theme and the sign out in the dropdown *}
+						{var string $username = $user->getUserIdentity()->username}
+						<div class="dropdown">
+							<button type="button" class="navbar-user" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+								<span class="avatar theme-primary">{$username|substr: 0, 2|upper}</span>
+								<span class="navbar-user-name">{$username}</span>
 							</button>
-							<ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm">
-								<li><a class="dropdown-item" n:href=":Account:">{_'Account'}</a></li>
+							<ul class="dropdown-menu dropdown-menu-end">
+								<li><a class="dropdown-item" n:href=":Account:"><i class="bi bi-person me-2" aria-hidden="true"></i>{_'Account'}</a></li>
 								<li n:if="Drago\Permission\Privilege::isAllowed($user, 'Backend:Admin', 'default')">
-									<a class="dropdown-item" n:href=":Backend:Admin:">{_'Administration'}</a>
+									<a class="dropdown-item" n:href=":Backend:Admin:"><i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>{_'Administration'}</a>
 								</li>
 								<li><hr class="dropdown-divider"></li>
-								<li>{include '../Accessory/Widget/@theme-switch.latte', class: 'dropdown-item', icon: true}</li>
+								{* the theme: light, dark or the one of the system; the menu stays open (auto-close outside) *}
+								<li class="dropdown-theme">
+									<span class="dropdown-theme-label">{_'Theme'}</span>
+									<div class="btn-group btn-group-segmented" role="group" aria-label="{_'Theme'}">
+										<button type="button" class="btn btn-sm" data-theme-value="light"><i class="bi bi-sun" aria-hidden="true"></i>{_'Light'}</button>
+										<button type="button" class="btn btn-sm" data-theme-value="dark"><i class="bi bi-moon" aria-hidden="true"></i>{_'Dark'}</button>
+										<button type="button" class="btn btn-sm" data-theme-value="auto"><i class="bi bi-display" aria-hidden="true"></i>{_'Auto'}</button>
+									</div>
+								</li>
 								<li><hr class="dropdown-divider"></li>
-								<li><a class="dropdown-item" n:href=":Sign:out">{_'Sign out'}</a></li>
+								<li><a class="dropdown-item" n:href=":Sign:out"><i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>{_'Sign out'}</a></li>
 							</ul>
 						</div>
 					{else}
-						{include '../Accessory/Widget/@theme-switch.latte', class: 'nav-link px-2', icon: true}
-						<a n:href=":Sign:in" class="btn btn-primary btn-sm ms-1">{_'Sign in'}</a>
+						<button type="button" class="navbar-icon" aria-label="{_'Toggle theme'}" data-tooltip="bottom"
+							data-theme-switcher data-theme-light-icon="bi bi-sun" data-theme-dark-icon="bi bi-moon">
+							<i data-theme-switcher-icon class="bi bi-moon" aria-hidden="true"></i>
+						</button>
+						<a n:href=":Sign:in" class="btn btn-primary btn-sm">{_'Sign in'}</a>
 					{/if}
 				</div>
 			</div>
@@ -74,60 +91,58 @@
 	</nav>
 </header>
 
-<main role="main" class="front-main flex-shrink-0">
-	<div class="container">
-		{snippet message}
-			{include '../Accessory/Widget/@toast.latte', flashes: $flashes}
-		{/snippet}
+<main role="main" class="container">
+	{snippet message}
+		{include '../Accessory/Widget/@toast.latte', flashes: $flashes}
+	{/snippet}
 
-		{include content}
-	</div>
+	{include content}
 </main>
 
-<footer class="front-footer mt-auto py-5 bg-body-tertiary">
+<footer class="blog-footer">
 	<div class="container">
 		<div class="row g-4">
 			<div class="col-lg-4">
-				<a class="d-inline-flex align-items-center gap-2 mb-2 text-decoration-none" n:href=":Front:Home:">
+				<a class="blog-brand mb-2" n:href=":Front:Home:">
 					{include brand-logo}
-					<span class="fw-semibold text-body-emphasis">{include brand}</span>
+					<span>{include brand}</span>
 				</a>
-				<p class="small text-body-secondary mb-2">{_'Built on Nette with Drago Extension.'}</p>
-				<p class="small text-body-secondary mb-0">&copy; {date('Y')} {include brand|stripHtml|trim}</p>
+				<p class="mb-2">{_'Built on Nette with Drago Extension.'}</p>
+				<p class="mb-0">&copy; {date('Y')} {include brand|stripHtml|trim}</p>
 			</div>
 
 			{* links of the site, then the projects and the tools the site is built with; edit them freely *}
 			<div class="col-6 col-md-4 col-lg-2 offset-lg-2">
-				<h2 class="h6 text-body-secondary">{_'Links'}</h2>
-				<ul class="list-unstyled small mb-0">
-					<li class="mb-2"><a n:href=":Front:Home:" class="front-footer-link">{_'Homepage'}</a></li>
-					<li class="mb-2"><a n:href=":Front:Blog:" class="front-footer-link">{_'Blog'}</a></li>
-					<li n:foreach="$menuPages as $slug => $title" class="mb-2">
-						<a n:href=":Front:Page:default, slug: $slug" class="front-footer-link">{$title}</a>
+				<h2 class="blog-footer-title">{_'Links'}</h2>
+				<ul class="blog-footer-links">
+					<li><a n:href=":Front:Home:">{_'Homepage'}</a></li>
+					<li><a n:href=":Front:Blog:">{_'Blog'}</a></li>
+					<li n:foreach="$menuPages as $slug => $title">
+						<a n:href=":Front:Page:default, slug: $slug">{$title}</a>
 					</li>
 				</ul>
 			</div>
 
 			<div class="col-6 col-md-4 col-lg-2">
-				<h2 class="h6 text-body-secondary">{_'Projects'}</h2>
-				<ul class="list-unstyled small mb-0">
-					<li class="mb-2"><a href="https://github.com/netis-cms/netis" class="front-footer-link">Netis</a></li>
-					<li class="mb-2"><a href="https://github.com/drago-ex" class="front-footer-link">Drago Extension</a></li>
-					<li class="mb-2"><a href="https://github.com/compostrap" class="front-footer-link">Compostrap</a></li>
-					<li class="mb-2"><a href="https://packagist.org/packages/drago-ex/" class="front-footer-link">Packagist</a></li>
+				<h2 class="blog-footer-title">{_'Projects'}</h2>
+				<ul class="blog-footer-links">
+					<li><a href="https://github.com/netis-cms/netis">Netis</a></li>
+					<li><a href="https://github.com/drago-ex">Drago Extension</a></li>
+					<li><a href="https://github.com/compostrap">Compostrap</a></li>
+					<li><a href="https://packagist.org/packages/drago-ex/">Packagist</a></li>
 				</ul>
 			</div>
 
 			<div class="col-6 col-md-4 col-lg-2">
-				<h2 class="h6 text-body-secondary">{_'Built with'}</h2>
-				<ul class="list-unstyled small mb-0">
-					<li class="mb-2"><a href="https://nette.org" class="front-footer-link">Nette</a></li>
-					<li class="mb-2"><a href="https://latte.nette.org" class="front-footer-link">Latte</a></li>
-					<li class="mb-2"><a href="https://dibiphp.com" class="front-footer-link">Dibi</a></li>
-					<li class="mb-2"><a href="https://getbootstrap.com" class="front-footer-link">Bootstrap</a></li>
-					<li class="mb-2"><a href="https://texy.info" class="front-footer-link">Texy</a></li>
-					<li class="mb-2"><a href="https://naja.js.org" class="front-footer-link">Naja</a></li>
-					<li class="mb-2"><a href="https://vite.dev" class="front-footer-link">Vite</a></li>
+				<h2 class="blog-footer-title">{_'Built with'}</h2>
+				<ul class="blog-footer-links">
+					<li><a href="https://nette.org">Nette</a></li>
+					<li><a href="https://latte.nette.org">Latte</a></li>
+					<li><a href="https://dibiphp.com">Dibi</a></li>
+					<li><a href="https://getbootstrap.com">Bootstrap</a></li>
+					<li><a href="https://texy.info">Texy</a></li>
+					<li><a href="https://naja.js.org">Naja</a></li>
+					<li><a href="https://vite.dev">Vite</a></li>
 				</ul>
 			</div>
 		</div>

@@ -2,9 +2,9 @@
 
 {block content}
 	<section>
-		<div class="d-flex align-items-baseline justify-content-between mb-5">
-			<h1 class="display-6 fw-semibold mb-0">{_'Latest articles'}</h1>
-			<a n:if="$list->articles" n:href=":Front:Blog:" class="link-secondary small">{_'All articles'} &rarr;</a>
+		<div class="blog-heading">
+			<h1 class="blog-title">{_'Latest articles'}</h1>
+			<a n:if="$list->articles" n:href=":Front:Blog:">{_'All articles'} &rarr;</a>
 		</div>
 
 		{include '../Blog/@article-list.latte', list: $list}

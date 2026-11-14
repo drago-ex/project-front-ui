@@ -6,6 +6,10 @@
 "Projects": "Projekty"
 "Built with": "Používám"
 "Homepage": "Hlavní stránka"
+"Theme": "Motiv"
+"Light": "Světlý"
+"Dark": "Tmavý"
+"Auto": "Automaticky"
 
 # descriptions of the privileges (permissionLabels in acl.neon)
 "Home page": "Úvodní stránka"

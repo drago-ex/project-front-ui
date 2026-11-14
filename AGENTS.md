@@ -16,22 +16,26 @@ of project-backend-ui. The workspace rules are in `../AGENTS.md`; dependencies a
   user for the layout) and is released after them.
 - `BasePresenter`: translator, `SettingsRequire`, `Authorization`; `beforeRender()` sets `$menuPages` only for
   `Front:*` presenters (`#[Inject] PageMenu`).
-- Layout: a `sticky-top` navbar with `bg-body-tertiary` like the footer, no borders; brand, blog, menu pages, the
-  user dropdown written by hand (the user name is data, `@dropdown.latte` would translate it; `$user` is
-  `CurrentUser`), the administration item only with `Backend:Admin` + `default` by
+- Layout: the page of the compostrap module `blog` (`body.blog-page`, `header.blog-header` with a Bootstrap navbar,
+  `main.container`, `footer.blog-footer`); brand, blog, menu pages, then `blog-header-actions`: for a signed-in user
+  the `navbar-user` dropdown (avatar with initials, account, administration, theme as `btn-group-segmented` with
+  `data-theme-value`, sign out; `$user` is `CurrentUser`), for a visitor the theme button `navbar-icon` and the
+  sign-in button. The administration item only with `Backend:Admin` + `default` by
   `Drago\Permission\Privilege::isAllowed()`. No language dropdown; the `/en/` routes still work. The footer has the
-  columns Links, Projects, Built with (`.front-footer-link`).
+  columns Links, Projects, Built with (`blog-footer-title`, `blog-footer-links`).
 - `Front/Home`: `ArticleListFactory::create(limit: 7)` rendered by `Front/Blog/@article-list.latte` of
   project-blog; no hero block.
-- Styles of the website live here, also those of the front templates of other packages (`.blog-card`,
-  `.blog-pill`, comments, `.content` for Texy text, images as a 21:9 cut): front-ui is the design each project
-  adapts, so project-blog and project-static-page ship markup and behaviour (e.g. `CommentReply`) but no front
-  styles.
+- Styles of the website are imported here, also those of the front templates of other packages: `front.scss` has
+  no rules of its own, it imports Bootstrap Icons and the compostrap modules `theme-switcher`, `tooltip`,
+  `dashboard` (only for `navbar-icon`, `navbar-user` and `dropdown-theme` of the header) and `blog` (after
+  `dashboard`, whose `body` background the class `blog-page` replaces). front-ui is the design each project adapts,
+  so project-blog and project-static-page ship markup in the classes of the module `blog` and behaviour
+  (e.g. `CommentReply`) but no front styles.
 - `front.js` imports the full `bootstrap` for the navbar collapse: drago-application and drago-component import
   the full Bootstrap too, and a separate `bootstrap/js/dist/collapse` import registered the click handler twice,
-  so the mobile menu did not open. It registers `CommentReply` of project-blog, dropdowns, the theme switcher,
-  toasts, TexyToolbar for comments and the copy button; `.comment:target` has a highlight and a scroll margin
-  under the sticky header.
+  so the mobile menu did not open. It registers `CommentReply` of project-blog, dropdowns, toasts,
+  TexyToolbar for comments and the copy button, and starts `ThemeSwitcher` (with the icons of the visitor's button)
+  and `CssTooltip` of compostrap.
 
 ## Commands
 ```bash
