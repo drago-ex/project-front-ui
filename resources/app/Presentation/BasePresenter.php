@@ -8,6 +8,7 @@ use Drago\Localization\TranslatorAdapter;
 use Drago\Permission\Authorization;
 use Nette\Application\UI\Presenter;
 use Nette\DI\Attributes\Inject;
+use Throwable;
 
 
 /**
@@ -26,6 +27,7 @@ abstract class BasePresenter extends Presenter
 	public PageMenu $pageMenu;
 
 
+	/** @throws Throwable */
 	protected function beforeRender(): void
 	{
 		parent::beforeRender();
