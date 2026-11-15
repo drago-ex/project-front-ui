@@ -6,9 +6,9 @@
 	"require": {
 		"php": ">=8.3 <9",
 		"drago-ex/translator": "^4.0.1",
-		"drago-ex/application": "^4.0",
-		"drago-ex/component": "^3.0",
-		"drago-ex/form": "^3.0",
+		"drago-ex/application": "^5.0",
+		"drago-ex/component": "^4.0",
+		"drago-ex/form": "^4.0",
 		"drago-ex/texy-toolbar": "^1.1",
 		"drago-ex/permission": "^2.0",
 		"drago-ex/project-front": "^3.0",
