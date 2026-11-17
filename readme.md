@@ -20,8 +20,8 @@ composer require drago-ex/project-front-ui
 [Project Tools](https://github.com/drago-ex/project-tools) copies the files of the package into the project once,
 replacing the plain files of [Project Front](https://github.com/drago-ex/project-front) (`BasePresenter`,
 `BaseTemplate`, the front layout, the home page, `assets/front.js` and `front.scss`). Its npm dependencies
-([compostrap](https://github.com/compostrap/compostrap), Bootstrap Icons) are installed by `npm install` of the project. It requires
-[Blog](https://github.com/drago-ex/project-blog), [Static Pages](https://github.com/drago-ex/project-static-page),
+([compostrap](https://github.com/compostrap/compostrap), Bootstrap Icons) are installed by `npm install` of the
+project; then build the assets again (`npm run vite:build`). It requires [Blog](https://github.com/drago-ex/project-blog), [Static Pages](https://github.com/drago-ex/project-static-page),
 [Settings](https://github.com/drago-ex/project-settings) and [Account](https://github.com/drago-ex/project-account).
 
 ## Layout
